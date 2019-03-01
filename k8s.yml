@@ -1,0 +1,59 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: ${PROJECT_NAME}
+spec:
+  selector:
+    app: ${PROJECT_NAME}
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${PROJECT_NAME}
+  labels:
+    app: ${PROJECT_NAME}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${PROJECT_NAME}
+  template:
+    metadata:
+      labels:
+        app: ${PROJECT_NAME}
+    spec:
+      containers:
+      - name: ${PROJECT_NAME}
+        image: eu.gcr.io/${GOOGLE_PROJECT_ID}/${PROJECT_NAME}:${CIRCLE_SHA1}
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+        env:
+        - name: HEALTH_CHECK_TIME
+          value: "45"
+        - name: EMAIL_RECEIVER
+          valueFrom:
+            secretKeyRef:
+              name: warms-credentials
+              key: EMAIL_RECEIVER
+        - name: EMAIL_SENDER
+          valueFrom:
+            secretKeyRef:
+              name: warms-credentials
+              key: EMAIL_SENDER
+        - name: EMAIL_SENDER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: warms-credentials
+              key: EMAIL_SENDER_PASSWORD
+        - name: SMPT_SERVER
+          valueFrom:
+            secretKeyRef:
+              name: warms-credentials
+              key: SMPT_SERVER

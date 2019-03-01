@@ -1,0 +1,61 @@
+version: 2
+jobs:
+  build_project:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: mkdir -p docker-cache
+      - run:
+          name: Building docker image
+          command: |
+            docker build \
+              --build-arg COMMIT_REF=${CIRCLE_SHA1} \
+              --build-arg BUILD_DATE=`date -u +”%Y-%m-%dT%H:%M:%SZ”` \
+              -t ${PROJECT_NAME} .
+            docker save -o docker-cache/built-image.tar ${PROJECT_NAME}
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - .
+  deploy_to_gke:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - setup_remote_docker
+      - run: 
+          name: Setup Google Cloud SDK
+          command: |
+            docker load < docker-cache/built-image.tar
+            apt-get install -qq -y gettext
+            # Athenticate
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+            gcloud --quiet container clusters get-credentials ${GOOGLE_CLUSTER_NAME}
+            # Push docker image to gcr
+            docker tag ${PROJECT_NAME} eu.gcr.io/${GOOGLE_PROJECT_ID}/${PROJECT_NAME}:${CIRCLE_SHA1}
+            gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://eu.gcr.io
+            docker push eu.gcr.io/${GOOGLE_PROJECT_ID}/${PROJECT_NAME}:${CIRCLE_SHA1}
+      - run:
+          name: Deploy to Kubernetes
+          command: |
+            envsubst < ${HOME}/project/k8s.yml > ${HOME}/patched_k8s.yml
+            kubectl apply -f ${HOME}/patched_k8s.yml
+            kubectl rollout status deployment/${PROJECT_NAME}
+
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - build_project
+      - deploy_to_gke:
+          requires:
+            - build_project
+          filters:
+            branches:
+              only: master

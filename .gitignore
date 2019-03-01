@@ -1,0 +1,4 @@
+.email_settings.conf
+.stack-work/
+Watchdog.cabal
+gke_secret.env
