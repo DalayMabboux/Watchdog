@@ -52,7 +52,7 @@ getEmailSettings =
     <$> getEnv "EMAIL_SENDER"
     <*> getEnv "EMAIL_SENDER_PASSWORD"
     <*> getEnv "EMAIL_RECEIVER"
-    <*> getEnv "SMPT_SERVER"
+    <*> getEnv "SMTP_SERVER"
 
 -- Start a timer T with a duration of D. If there is an event E before the timer ends
 -- then the timer will be restarted to the duration D. If there is no event before

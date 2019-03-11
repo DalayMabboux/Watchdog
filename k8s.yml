@@ -52,8 +52,8 @@ spec:
             secretKeyRef:
               name: warms-credentials
               key: EMAIL_SENDER_PASSWORD
-        - name: SMPT_SERVER
+        - name: SMTP_SERVER
           valueFrom:
             secretKeyRef:
               name: warms-credentials
-              key: SMPT_SERVER
+              key: SMTP_SERVER
