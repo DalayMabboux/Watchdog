@@ -47,28 +47,27 @@ EMAIL_SENDER_PASSWORD=the sender email password
 EMAIL_RECEIVER=the receiver email adress
 ```
 ### Run the docker image locally
+```
 docker run --env-file gke_secret.env -p 3000:3000 gcr.io/warms-watchdog/warms-watchdog:v1.0
+```
 
 # GKE commands
 Set secrets:
 > kubectl create secret generic warms-credentials --from-file gke_secret.env
 
-Build docker image locally:
-> docker build -t gcr.io/warms-watchdog/warms-watchdog:v1.0 .
-
 Connect to cluster:
-  gcloud container clusters get-credentials standard-cluster-1 --zone europe-west1-b
-  gcloud auth application-default login
+> gcloud container clusters get-credentials standard-cluster-1 --zone europe-west1-b
+> gcloud auth application-default login
 
-If there is already a deployed version, delete it:
-  kubectl delete -f  deployment.yml
+Delete the currently deployed version
+> kubectl delete -f deployment.yml
 
 Push to Google registry:
-  gcloud docker -- push gcr.io/warms-watchdog/warms-watchdog:v1.0
+> gcloud docker -- push gcr.io/warms-watchdog/warms-watchdog:v1.0
 
 Deploy it:
-  kubectl create -f deployment.yml --save-config
+> kubectl create -f deployment.yml --save-config
 
 Check log:
-  kubectl get pods
-  kubectl logs -f <pod-id>
+> kubectl get pods
+> kubectl logs -f <pod-id>
