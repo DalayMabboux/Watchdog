@@ -6,14 +6,15 @@ Push feature branch to github. CircleCI gets trigger, compiles and executes all 
 
 # Configuration
 ## CircleCI
-Set these environment variables
-| Key | Description |
-|---|---|
-| GCLOUD_SERVICE_KEY | JSON string containing the GKE credentials, used to login to GKE from CircleCI.. |
-| GOOGLE_CLUSTER_NAME | [See GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/managing-clusters) |
-| GOOGLE_COMPUTE_ZONE | [See GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/managing-clusters) |
-| GOOGLE_PROJECT_ID | [See GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/managing-clusters) |
-| PROJECT_NAME | Name of the project. Will be used for the docker image name, GKE container name. |
+Set these environment variables:
+
+Key | Description
+---|---
+GCLOUD_SERVICE_KEY | JSON string containing the GKE credentials, used to login to GKE from CircleCI.
+GOOGLE_CLUSTER_NAME | [See GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/managing-clusters)
+GOOGLE_COMPUTE_ZONE | [See GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/managing-clusters)
+GOOGLE_PROJECT_ID | [See GKE](https://cloud.google.com/kubernetes-engine/docs/how-to/managing-clusters)
+PROJECT_NAME | Name of the project. Will be used for the docker image name, GKE container name.
 
 ## GKE
 Configuration attributes for Google Kubernetes Engine.
@@ -53,7 +54,7 @@ docker run --env-file gke_secret.env -p 3000:3000 gcr.io/warms-watchdog/warms-wa
 
 # GKE commands
 Set secrets:
-> kubectl create secret generic warms-credentials --from-file gke_secret.env
+> kubectl create secret generic warms-credentials --from-env-file gke_secret.env
 
 Connect to cluster:
 > gcloud container clusters get-credentials standard-cluster-1 --zone europe-west1-b
