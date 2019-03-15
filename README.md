@@ -55,10 +55,10 @@ docker run --env-file gke_secret.env -p 3000:3000 gcr.io/warms-watchdog/warms-wa
 ```
 
 # GKE commands
-Set secrets:
+Set secrets
 > kubectl create secret generic warms-credentials --from-env-file gke_secret.env
 
-Connect to cluster:
+Connect to cluster
 > gcloud container clusters get-credentials standard-cluster-1 --zone europe-west1-b
 > gcloud auth application-default login
 
@@ -68,9 +68,9 @@ Delete the currently deployed version
 Push to Google registry:
 > gcloud docker -- push gcr.io/warms-watchdog/warms-watchdog:v1.0
 
-Deploy it:
+Deploy it
 > kubectl create -f deployment.yml --save-config
 
-Check log:
+Check log
 > kubectl get pods
 > kubectl logs -f <pod-id>
