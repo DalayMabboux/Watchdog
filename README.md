@@ -1,5 +1,6 @@
 # Purpose
 Simple docker based heartbeat. Calling REST service (alive) will restart the timer. Once the timer has terminated (the timer has no more been restarted) then send an email to the specified sender (using the supplied credentials). Currently only gmail is supported.
+
 ![Watchdog schema](WatchdogDiagram.jpg) 
 
 # Developement workflow
