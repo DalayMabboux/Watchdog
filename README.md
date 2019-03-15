@@ -1,5 +1,6 @@
 # Purpose
 Simple docker based heartbeat. Calling REST service (alive) will restart the timer. Once the timer has terminated (the timer has no more been restarted) then send an email to the specified sender (using the supplied credentials). Currently only gmail is supported.
+![Watchdog schema](WatchdogDiagram.jpg) 
 
 # Developement workflow
 Push feature branch to github. CircleCI gets trigger, compiles and executes all tests. After merging the branch to master, CircleCI will compile, execute tests and if all went ok, creates a new docker image and deploys it to GKE (Google Cloud / Kubernetes Engine).
